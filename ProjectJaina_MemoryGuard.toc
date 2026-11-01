@@ -1,0 +1,8 @@
+## Interface: 30300
+## Version: 1.0.0
+## Title: |cFF38BDF8Project Jaina|r - |cFF34D399Memory Guard|r
+## Notes: Centinela inteligente de memoria virtual y recolección agresiva de basura Lua (Anti-OOM) para texturas FHD 3.3.5a.
+## Author: DarckRovert & Antigravity (Mythos 5)
+## SavedVariables: ProjectJaina_MemoryGuard_DB
+
+ProjectJaina_MemoryGuard.lua
