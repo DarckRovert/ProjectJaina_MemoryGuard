@@ -20,6 +20,22 @@ local CONFIG = {
     DEBUG = false
 }
 
+local function InitDB()
+    ProjectJaina_MemoryGuard_DB = ProjectJaina_MemoryGuard_DB or {}
+    if ProjectJaina_MemoryGuard_DB.debug == nil then
+        ProjectJaina_MemoryGuard_DB.debug = false
+    end
+    if not ProjectJaina_MemoryGuard_DB.thresholdKB then
+        ProjectJaina_MemoryGuard_DB.thresholdKB = 45000
+    end
+    if not ProjectJaina_MemoryGuard_DB.interval then
+        ProjectJaina_MemoryGuard_DB.interval = 30.0
+    end
+    CONFIG.DEBUG = ProjectJaina_MemoryGuard_DB.debug
+    CONFIG.MEM_HIGH_THRESHOLD_KB = ProjectJaina_MemoryGuard_DB.thresholdKB
+    CONFIG.INTERVAL_SECONDS = ProjectJaina_MemoryGuard_DB.interval
+end
+
 local pendingPurge = false
 local timeSinceLastCheck = 0
 
@@ -71,7 +87,12 @@ end
 
 -- Manejador de eventos del Centinela
 GuardFrame:SetScript("OnEvent", function(self, event, ...)
-    if event == "PLAYER_ENTERING_WORLD" then
+    if event == "ADDON_LOADED" then
+        local addon = ...
+        if addon == ADDON_NAME then
+            InitDB()
+        end
+    elseif event == "PLAYER_ENTERING_WORLD" then
         -- Pantalla de carga completada: purga masiva de assets temporales
         PerformSafePurge("Carga de Mundo")
     elseif event == "ZONE_CHANGED_NEW_AREA" then
@@ -91,10 +112,20 @@ GuardFrame:SetScript("OnEvent", function(self, event, ...)
     end
 end)
 
+GuardFrame:RegisterEvent("ADDON_LOADED")
 GuardFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 GuardFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 GuardFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 GuardFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
+
+-- Exportación de API Global para el Ecosistema Project Jaina
+_G.ProjectJaina_MemoryGuard_Purge = function(reason)
+    return PerformSafePurge(reason or "API Externa")
+end
+
+_G.ProjectJaina_MemoryGuard_GetStatus = function()
+    return collectgarbage("count") / 1024, InCombatLockdown(), pendingPurge
+end
 
 -- Loop de temporizador sin allocations dinámicas
 GuardFrame:SetScript("OnUpdate", function(self, elapsed)
@@ -122,6 +153,9 @@ SlashCmdList["PROJECTJAINA_MEMGUARD"] = function(msg)
         end
     elseif cmd == "debug" then
         CONFIG.DEBUG = not CONFIG.DEBUG
+        if ProjectJaina_MemoryGuard_DB then
+            ProjectJaina_MemoryGuard_DB.debug = CONFIG.DEBUG
+        end
         LogMessage("Modo depuración: " .. (CONFIG.DEBUG and "|cFF34D399ACTIVADO|r" or "|cFFEF4444DESACTIVADO|r"))
     else
         LogMessage(string.format("Memoria Lua en uso: |cFF38BDF8%.2f MB|r | Estado Combate: %s | Purgas Pendientes: %s",
