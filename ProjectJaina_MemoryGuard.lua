@@ -137,21 +137,24 @@ GuardFrame:SetScript("OnUpdate", function(self, elapsed)
 end)
 
 -- Comandos de barra (Slash Commands)
-SLASH_PROJECTJAINA_MEMGUARD1 = "/pjmem"
-SLASH_PROJECTJAINA_MEMGUARD2 = "/memoryguard"
+SLASH_PROJECTJAINA_MEMGUARD1 = "/mem"
+SLASH_PROJECTJAINA_MEMGUARD2 = "/memoria"
+SLASH_PROJECTJAINA_MEMGUARD3 = "/memory"
+SLASH_PROJECTJAINA_MEMGUARD4 = "/pjmem"
+SLASH_PROJECTJAINA_MEMGUARD5 = "/memoryguard"
 SlashCmdList["PROJECTJAINA_MEMGUARD"] = function(msg)
     local cmd = (msg or ""):lower():match("^%s*(%S+)")
     local currentMB = collectgarbage("count") / 1024
     local inCombat = InCombatLockdown()
 
-    if cmd == "collect" or cmd == "purge" or cmd == "limpiar" then
+    if cmd == "collect" or cmd == "purge" or cmd == "limpiar" or cmd == "purgar" then
         if inCombat then
             LogMessage("|cFFEF4444No se puede purgar memoria en combate.|r La purga se ejecutará al salir de combate.")
             pendingPurge = true
         else
             PerformSafePurge("Comando Manual")
         end
-    elseif cmd == "debug" then
+    elseif cmd == "debug" or cmd == "depurar" then
         CONFIG.DEBUG = not CONFIG.DEBUG
         if ProjectJaina_MemoryGuard_DB then
             ProjectJaina_MemoryGuard_DB.debug = CONFIG.DEBUG
@@ -163,7 +166,7 @@ SlashCmdList["PROJECTJAINA_MEMGUARD"] = function(msg)
             inCombat and "|cFFEF4444EN COMBATE|r" or "|cFF34D399FUERA DE COMBATE|r",
             pendingPurge and "|cFFFBBF24SÍ|r" or "NO"
         ))
-        LogMessage("Comandos disponibles: |cFF38BDF8/pjmem collect|r (forzar limpieza) | |cFF38BDF8/pjmem debug|r (alternar avisos)")
+        LogMessage("Comandos disponibles: |cFF38BDF8/mem limpiar|r (forzar purga de memoria) | |cFF38BDF8/mem depurar|r (alternar avisos)")
     end
 end
 
