@@ -36,11 +36,13 @@ El cliente oficial de **Project Jaina** integra un paquete masivo de texturas, m
 
 ## 3. Comandos de Consola (Slash Commands)
 
+Se admiten de forma indistinta los alias canónicos: `/mem`, `/memoria`, `/memory`, `/pjmem` o `/memoryguard`.
+
 | Comando | Acción |
 | :--- | :--- |
-| `/pjmem` o `/memoryguard` | Muestra el estado del centinela, uso actual de memoria y combate. |
-| `/pjmem collect` o `/pjmem purge` | Fuerza una purga inmediata si está fuera de combate (o la encola si está en combate). |
-| `/pjmem debug` | Alterna el modo de telemetría y reportes detallados en el chat. |
+| `/mem` | Muestra el estado del centinela, uso actual de memoria Lua (MB) y estado de combate. |
+| `/mem limpiar` o `/mem purgar` (`collect` / `purge`) | Fuerza una purga inmediata si está fuera de combate (o la difiere si está en combate). |
+| `/mem depurar` (`debug`) | Alterna el modo de telemetría y reportes detallados en el chat. |
 
 ---
 

@@ -11,7 +11,7 @@
 ]]
 
 local ADDON_NAME = "ProjectJaina_MemoryGuard"
-local VERSION = "1.0.0"
+local VERSION = "1.1.0"
 
 -- Configuración por defecto
 local CONFIG = {
